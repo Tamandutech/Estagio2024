@@ -1,0 +1,48 @@
+#define motorDireita OUT_A      // Motor Direito --> entrada A
+#define motorArma OUT_C         // Possível motor de Arma --> entrada C
+#define motorEsquerda OUT_B     // Motor Esquerdo --> entrada B
+#define distancia_sensor SensorUS(IN_1)// Sensor Ultrassônico --> entrada 1
+void movimentoInicial();
+
+
+//__________MEXER PARA REGULAR A DISTANCIA DE BUSCA____________________________________
+#define distancia_busca 30      // Limiar para o robô começar a andar para frente, em centímetros
+
+
+//==============================================================================
+//=========================CORPO DO CÓDIGO======================================
+//==============================================================================
+task arma() {                   // Colocamos o movimento da arma em uma "task" para poder fazer multithread junto com a movimentação inicial do robô
+     OnFwd(motorArma, -100);      // Desarme da nossa arma (rampa) que inicia a luta acima do robo
+     Wait(1200);
+     Off(motorArma);
+}
+
+task main(){
+
+    SetSensorLowspeed(IN_1);
+    Wait(5000);                         // Tempo de espera previsto nas regras
+
+    start arma;                         // Inicio paralelo do desarme da arma
+    movimentoInicial();                 // Inicio do movimento inicial
+
+    while(true){                        // Main rodando infinitamente
+        if(distancia_sensor < distancia_busca){
+            OnFwd(motorDireita, -100);
+            OnFwd(motorEsquerda, -100);
+            }
+
+        else{                           // Caso não localize um objeto, girar para o lado esquedo
+            OnFwd(motorDireita, 30);      // Usamos a potencia 30 para garantir que o robo encontre o robo adversario
+            OnFwd(motorEsquerda, -30);
+            }
+    }
+}
+
+void movimentoInicial() {          // Função do movimento incial
+     OnFwd(motorDireita, -100);    // Fazemos o robô andar para frente por 0.6 para certificar que o mesmo encontre o adversario na main
+     OnFwd(motorEsquerda, -100);
+     Wait(600)
+     Off(motorDireita);
+     Off(motorEsquerda);
+}
