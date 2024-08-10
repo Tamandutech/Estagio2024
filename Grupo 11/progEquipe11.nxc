@@ -48,7 +48,10 @@ task main(){
 void movimentoInicial() {
      OnFwd(motorDireita, 100);
      OnFwd(motorEsquerda, -100);
-     Wait(900);
+     Wait(860);
+     OnFwd(motorDireita, -100);
+     OnFwd(motorEsquerda, -100);
+     Wait(600)
      Off(motorDireita);
      Off(motorEsquerda);
 }
