@@ -2,14 +2,13 @@
 #define motorArma OUT_C         // Possível motor de Arma --> entrada B
 #define motorEsquerda OUT_B     // Motor Esquerdo --> entrada C
 #define distancia_sensor SensorUS(IN_1)// Sensor Ultrassônico --> entrada 1
-void arma();
 void movimentoInicial();
 
 
 
 
 //__________MEXER PARA REGULAR A DISTANCIA DE BUSCA____________________________________
-#define distancia_busca 35      // Limiar para o robô começar a andar para frente, em centímetros
+#define distancia_busca 30      // Limiar para o robô começar a andar para frente, em centímetros
 
 
 
@@ -20,8 +19,8 @@ void movimentoInicial();
 //==============================================================================
 task arma() {
 
-     OnFwd(motorArma, 100);      // Se o desarme for para a direção contrária, inverter sinal. Mexer na potência.
-     Wait(1000);                 // Se não desarmar completo, aumentar o delay;
+     OnFwd(motorArma, -100);      // Se o desarme for para a direção contrária, inverter sinal. Mexer na potência.
+     Wait(1200);                 // Se não desarmar completo, aumentar o delay;
      Off(motorArma);            // Uma vez que as linhas acabarem, o robô irá para a função de movimentoInicial ou voltar para a main.
 }
 
@@ -49,7 +48,7 @@ task main(){
 void movimentoInicial() {
      OnFwd(motorDireita, 100);
      OnFwd(motorEsquerda, -100);
-     Wait(500);
+     Wait(900);
      Off(motorDireita);
      Off(motorEsquerda);
 }
