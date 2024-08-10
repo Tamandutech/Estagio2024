@@ -1,0 +1,115 @@
+//==============================================================================
+//===| TAMANDUTECH EQUIPE DE ROBÓTICA  |========================================
+//===|          ESTÁGIO 2024           |========================================
+//===|       CÓDIGO DE EXEMPLO         |========================================
+//==============================================================================
+
+/* Este código funciona de maneira que o robô possa se movimentar através dos motores A e C
+Gire no próprio eixo para a esquerda com 50% da potência até que identifique um adversário a menos de 35cm.
+Uma vez identificado, o robô andará para frente em velocidade máxima até que a luta acabe ou ele perca o adversário de vista.
+
+O intuito do desafio é adaptar o código ao robô de vocês, adicionar movimentação inicial na função pré definida e realizar ajustes
+na velocidade dos motores conforme forem necessários
+
+Os comandos básicos são:
+
+OnFwd(MOTOR, POTENCIA (0 a 100));
+delay(milisegundos);
+
+Laços são os comuns de C, while, for, do while, until.
+
+Condicionais if, else if, else, switch case.
+
+Para outras funções, tasks, structures ou condicionamentos especiais, procurar ajuda na staff do estágio */
+
+//==============================================================================
+//==============================================================================
+//==============================================================================
+
+/* Ordem de montagem:
+
+Motor da Direita na porta A
+Motor da Arma ou desarme na porta B
+Motor da Esquerda na porta C
+Sensor na porta 1
+Qualquer outra condição ou ideia, buscar apoio dos membros da equipe para configuração
+*/
+
+//==============================================================================
+//==============================================================================
+//==============================================================================
+
+//__________NÃO MEXER SEM APOIO DA STAFF_______________________________________
+#define motorDireita OUT_A      // Motor Direito --> entrada A
+#define motorArma OUT_B         // Possível motor de Arma --> entrada B
+#define motorEsquerda OUT_C     // Motor Esquerdo --> entrada C
+#define distancia_sensor SensorUS(IN_1)// Sensor Ultrassônico --> entrada 1
+void arma();
+void movimentoInicial();
+
+
+
+
+//__________MEXER PARA REGULAR A DISTANCIA DE BUSCA____________________________________
+#define distancia_busca 35      // Limiar para o robô começar a andar para frente, em centímetros
+bool x=false;
+
+
+
+
+
+//==============================================================================
+//=========================CORPO DO CÓDIGO======================================
+//==============================================================================
+
+task main(){
+
+    SetSensorLowspeed(IN_1);            // NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+    Wait(5000);                         // Tempo de espera previsto nas regras
+
+    start arma;
+    start movimentoInicial;
+    
+    while(true){
+        if (x == true){
+           while(true){                        //Rodar para sempre
+               if(distancia_sensor < distancia_busca){          // Se o sensor está vendo menos do que o definido como limiar, vá para frente
+                  OnFwd(motorDireita, 100);     // Se o seu robô for para trás, apenas inverter o sinal para "-100";
+                  OnFwd(motorEsquerda, 100);    // Se o seu robô for para trás, apenas inverter o sinal para "-100";
+               }
+               else{                           // Caso não localize um objeto, girar para um lado (nesse caso, Esquerda)
+                  OnFwd(motorDireita, 50);      // Se o seu robô for para trás, inverta o sinal da potência
+                  OnFwd(motorEsquerda, -50);    // Diminua ou aumente a potência para curvas mais rápidas ou devagar.
+               }
+           }
+        }
+    }
+}
+
+task arma() {
+
+     OnFwd(motorArma, 100);      // Se o desarme for para a direção contrária, inverter sinal. Mexer na potência.
+     Wait(1000);                 // Se não desarmar completo, aumentar o delay;
+     Off(motorArma);            // Uma vez que as linhas acabarem, o robô irá para a função de movimentoInicial ou voltar para a main.
+     StopTask(arma);
+}
+
+task movimentoInicial() {
+     while(true) {
+         if (distancia_sensor <= distancia_busca){
+            Off(motorDireita);
+            Off(motorEsquerda);
+            x = true;
+            StopTask(movimentoInicial);
+         }
+
+         else{
+            OnFwd(motorDireita, 100);
+            OnFwd(motorEsquerda, -100);
+         }
+     }
+
+   // Esta função é a movimentação que o seu robô fará quando os 5s acabarem, andar na diagonal, ir retão, dar ré ou girar.
+   // Tudo que vocês puderem fazer será útil, hoje nossos robôs atuam com 9 a 26 estratégias *para cada lado*
+   // Uma vez que as linhas de código aqui acabarem, o robô voltará de onde parou, começando o while(true) das buscas.
+}
