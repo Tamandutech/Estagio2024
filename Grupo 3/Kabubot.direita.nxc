@@ -1,0 +1,51 @@
+           //==============================================================================
+//===| TAMANDUTECH EQUIPE DE ROBÓTICA  |========================================
+//===|          ESTÁGIO 2024           |========================================
+//===|       CÓDIGO DO KabuBot         |========================================
+//===|   GRUPO 3: GUSTAVO FAUSTINO     |========================================
+//===|               JULIA LIE         |========================================
+//===|         NICOLAS DA SILVA LONGO  |========================================
+//==============================================================================
+
+#define motorDireita OUT_C      // Motor Direito --> entrada C
+#define motorEsquerda OUT_B     // Motor Esquerdo --> entrada B
+#define distancia_sensor SensorUS(IN_4)// Sensor Ultrassônico --> entrada 4
+
+void movimentoInicial();
+
+#define distancia_busca 30      // Limiar para o robô começar a andar para frente, em centímetros
+
+task main(){
+
+    SetSensorLowspeed(IN_4);            // NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+    Wait(5000);                         // Tempo de espera previsto nas regras
+
+    movimentacaoInicial();
+
+    while(true){                        //Rodar para sempre
+        if(distancia_sensor < distancia_busca){          // Se o sensor está vendo menos do que o definido como limiar, vá para frente
+           OnFwd(motorDireita,100);
+           OnFwd(motorEsquerda,100);
+        }
+
+        else{                           // Caso não localize um objeto, girar para um lado (nesse caso, Esquerda)
+           OnRev(motorDireita,70);      // Se o seu robô for para trás, inverta o sinal da potência
+           OnFwd(motorEsquerda,-70);    // Diminua ou aumente a potência para curvas mais rápidas ou devagar.
+        }
+    }
+}
+
+void movimentoInicial()
+{
+   // Esta função é a movimentação que o seu robô fará quando os 5s acabarem, andar na diagonal, ir retão, dar ré ou girar.
+   // Tudo que vocês puderem fazer será útil, hoje nossos robôs atuam com 9 a 26 estratégias *para cada lado*
+   // Uma vez que as linhas de código aqui acabarem, o robô voltará de onde parou, começando o while(true) das buscas.
+}
+
+
+
+
+
+
+
+
