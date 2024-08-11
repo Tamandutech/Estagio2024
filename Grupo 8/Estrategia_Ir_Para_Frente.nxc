@@ -1,0 +1,45 @@
+/*
+==============================================================================================================================================================================================
+
+Nome da Estratégia(Código): Estratégia Padrão
+
+Descrição: Este código controla um robô sumô utilizando dois motores e um sensor de distância.
+O objetivo é manter uma distância segura do oponente, ajustando a velocidade dos motores com base na diferença entre a leitura do sensor e um valor de referência.
+Se o robô detectar que o oponente está muito próximo (<= 30 cm), ele se move para frente rapidamente. Caso contrário, ele continua a se movendo até encontrar o seu oponente.
+
+Usamos no Combate de Sumô: Sim
+
+==============================================================================================================================================================================================
+*/
+
+#define motorDireita OUT_A // motor direito na saÃ­da a
+#define motorEsquerda OUT_C //motor esquerdo na saÃ­da c
+
+#define distanciaSensor SensorUS(IN_1) //sensor distancia entrada 1
+#define distanciaBusca 30 //distancia para andar pra frente
+
+//estrategia de ir pra frente na movimentacaoInicial
+void movimentacaoInicial() {
+   OnFwd(motorDireita,100);
+   OnFwd(motorEsquerda,100);
+}
+
+task main() {
+
+    SetSensorLowspeed(IN_1);            // NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+    Wait(5000);                         // Tempo de espera previsto nas regras
+
+    movimentacaoInicial();
+
+    while(true) {
+        // andar pra frente  para controlar a distancia
+        if(distanciaSensor < distanciaBusca) {
+            OnFwd(motorDireita, 100);
+            OnFwd(motorEsquerda, 100);
+        } else { //virar pro lado caso nao visualize
+            OnFwd(motorDireita, 100);
+            OnFwd(motorEsquerda, 100);
+        }
+
+    }
+}
