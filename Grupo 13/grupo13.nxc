@@ -44,7 +44,7 @@ Qualquer outra condição ou ideia, buscar apoio dos membros da equipe para config
 //#define motorArma OUT_B         // Possível motor de Arma --> entrada B
 #define motorEsquerda OUT_A     // Motor Esquerdo --> entrada C
 #define distancia_sensor SensorUS(IN_4)// Sensor Ultrassônico --> entrada 1
-#define infravermelho_sensor Sensor(IN_B)// Sensor Infravermelho --> entrada 2
+#define infravermelho_sensor Sensor(IN_1)// Sensor Infravermelho --> entrada 2
 //void arma();
 void movimentoInicial();
 
@@ -64,30 +64,30 @@ void movimentoInicial();
 //==============================================================================
 
 task main(){
-    SetSensorLowspeed(IN_1);            // NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
-    SetSensorLight(IN_2);
+    SetSensorLowspeed(IN_4);            // NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+//    SetSensorLight(IN_1);
     Wait(5000);                         // Tempo de espera previsto nas regras
 
     //arma();                           // Apagar o "//" caso seu robô tenha motor para arma/desarme
     movimentacaoInicial();              // Apagar o "//" para que seu robô execute a estratégia inicial
 
     while(true){                                     //Rodar para sempre
-        if(infravermelho_sensor < limite_arena){     // Se o infravermelho enxergar o limite da arena
-           // Ande em ré e vire
-           OnFwd(motorDireita,-100);
-           OnFwd(motorEsquerda,-100);
-           Wait(1000);
-           OnFwd(motorDireita,-100);
-           OnFwd(motorEsquerda,100);
-           Wait(1000);
-        }
+//        if(infravermelho_sensor < limite_arena){     // Se o infravermelho enxergar o limite da arena
+//           // Ande em ré e vire
+//           OnFwd(motorDireita,-100);
+//           OnFwd(motorEsquerda,-100);
+//           Wait(1000);
+//           OnFwd(motorDireita,-100);
+//           OnFwd(motorEsquerda,100);
+//           Wait(1000);
+//        }
         if(distancia_sensor < distancia_busca){  // Se o sensor está vendo menos do que o definido como limiar, vá para frente
            OnFwd(motorDireita,100);              // Se o seu robô for para trás, apenas inverter o sinal para "-100";
            OnFwd(motorEsquerda,100);             // Se o seu robô for para trás, apenas inverter o sinal para "-100";
         }
         else{                                    // Caso não localize um objeto, girar para um lado (nesse caso, Esquerda)
-           OnFwd(motorDireita,50);               // Se o seu robô for para trás, inverta o sinal da potência
-           OnFwd(motorEsquerda,-50);             // Diminua ou aumente a potência para curvas mais rápidas ou devagar.
+           OnFwd(motorDireita,75);               // Se o seu robô for para trás, inverta o sinal da potência
+           OnFwd(motorEsquerda,-75);             // Diminua ou aumente a potência para curvas mais rápidas ou devagar.
         }
     }
 }
@@ -106,9 +106,9 @@ void movimentoInicial()
    // Uma vez que as linhas de código aqui acabarem, o robô voltará de onde parou, começando o while(true) das buscas.
    OnFwd(motorDireita,100);
    OnFwd(motorEsquerda,100);
-   Wait(500);
+   Wait(250);
    OnFwd(motorDireita,-100);
    OnFwd(motorEsquerda,-100);
-   Wait(500);
+   Wait(250);
 }
 
