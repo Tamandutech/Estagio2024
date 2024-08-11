@@ -1,0 +1,73 @@
+/*
+==============================================================================================================================================================================================
+
+Nome da Estratégia(Código): Estratégia da Rotatória
+
+Descrição: Este código controla um robô sumô utilizando dois motores e um sensor de distância para reagir ao oponente.
+A função `Movimentacao_Defesa()` utiliza um controle proporcional (PID simplificado) para ajustar a direção do robô, mantendo uma distância segura.
+No loop principal, se o sensor detectar que o oponente está a menos de 30 cm, o robô se move para trás e um contador é incrementado.
+Se essa proximidade persistir por mais de 1 segundo, o robô realiza uma manobra adicional para reposicionamento.
+O contador é reiniciado quando a condição de proximidade não é satisfeita.
+
+Usamos no Combate de Sumô: Não, pois a lógica do código não apresentou ser muito efetiva e eficaz, fazendo com que a equipe ficasse com dúvidas do desempenho do código durante a luta.
+
+==============================================================================================================================================================================================
+*/
+
+//Definições dos Motores e Sensores
+#define motorDireita OUT_A                  //Motor Direito --> entrada A
+#define motorEsquerda OUT_C                //Motor Esquerdo --> entrada C
+#define distancia_sensor SensorUS(IN_1)   //Sensor de Sistancia Entrada 4
+
+int Referencia = 30;
+const float Kp = 4.0;   //Constante Proporcional
+int Erro;
+int Forca = 80;
+int Correcao;
+int Velocidade_OUT_A;
+int Velocidade_OUT_C;
+
+long Contador = 0;
+int Tempo_Max = 1000;
+int Intervalo = 50;
+
+//Função de Movimentação com Fator de Correção PID
+void Movimentacao_Defesa()
+{
+    Erro = distancia_sensor - Referencia;
+    Correcao = Erro * Kp;
+    Velocidade_OUT_A = Forca + Correcao;
+    Velocidade_OUT_C = Forca - Correcao;
+
+    OnFwd(motorDireita, Velocidade_OUT_A);
+    OnFwd(motorEsquerda, Velocidade_OUT_C);
+}
+
+task main()
+{
+    SetSensorLowspeed(IN_1);   //NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+    Wait(5000);               //Tempo de espera previsto nas regras
+
+    while (true)
+    {
+        if (distancia_sensor<30)
+        {
+         Contador += Intervalo;
+         OnFwd(motorDireita, -100);
+         OnFwd(motorEsquerda, -100);
+            if (Contador >= Tempo_Max)   //Se a detecção durar mais de 1 segundos
+            {
+                OnFwd(motorDireita, -50);
+                OnFwd(motorEsquerda, -100);
+                Wait(100);       //Tempo de espera
+                Contador = 0;   //Reseta o contador após a ação
+            }
+
+        }
+        else
+        {
+         Contador = 0;   //Reseta o contador se a condição não for satisfeita
+         Movimentacao_Defesa();
+        }
+    }
+}

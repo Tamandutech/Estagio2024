@@ -1,0 +1,60 @@
+/*
+==============================================================================================================================================================================================
+
+Nome da Estratégia(Código): Estratégia Inicio Esquerda
+
+Descrição: Este código controla um robô sumô utilizando dois motores e um sensor de distância.
+O objetivo é manter uma distância segura do oponente, ajustando a velocidade dos motores com base na diferença entre a leitura do sensor e um valor de referência.
+A função `Movimentacao_Defesa()` aplica um controle proporcional (PID simplificado) para corrigir a direção do robô, compensando o erro de distância.
+Se o robô detectar que o oponente está muito próximo (<= 30 cm), ele se move para frente rapidamente. Caso contrário, ele continua a se mover com correção defensiva.
+No início do programa, os motores são configurados para girar em direções opostas (`motorDireita` para trás com -80 e `motorEsquerda` para frente com 80) por 5 segundos.
+Isso faz com que o robô execute uma rotação em torno de si mesmo, o que pode ser uma estratégia para se posicionar no centro da arena ou procurar o oponente.
+
+Usamos no Combate de Sumô: Não, pois a lógica do código não apresentou ser muito efetiva e eficaz, fazendo com que a equipe ficasse com dúvidas do desempenho do código durante a luta.
+
+==============================================================================================================================================================================================
+*/
+
+//Definições dos Motores e Sensores
+#define motorDireita OUT_A                  //Motor Direito --> entrada A
+#define motorEsquerda OUT_C                //Motor Esquerdo --> entrada C
+#define distancia_sensor SensorUS(IN_1)   //Sensor de Sistancia Entrada 4
+
+int Referencia = 30;
+const float Kp = 4.0;   //Constante Proporcional
+int Erro;
+int Forca = 80;
+int Correcao;
+int Velocidade_OUT_A;
+int Velocidade_OUT_C;
+
+//Função de Movimentação com Fator de Correção PID
+void Movimentacao_Defesa()
+{
+    Erro = distancia_sensor - Referencia;
+    Correcao = Erro * Kp;
+    Velocidade_OUT_A = Forca + Correcao;
+    Velocidade_OUT_C = Forca - Correcao;
+
+    OnFwd(motorDireita, Velocidade_OUT_A);
+    OnFwd(motorEsquerda, Velocidade_OUT_C);
+}
+
+task main()
+{
+    SetSensorLowspeed(IN_1);   //NÃO MEXER SUJEITO À >>>PROBLEMAS<<<
+    Wait(5000);               //Tempo de espera previsto nas regras
+
+    OnFwd(motorDireita, -80);
+    OnFwd(motorEsquerda, 80);
+
+    while (true)
+    {
+        if (distancia_sensor<=30) {
+            OnFwd(motorDireita, -100);
+            OnFwd(motorEsquerda, -100);
+        } else {
+            Movimentacao_Defesa();
+        }
+    }
+}
