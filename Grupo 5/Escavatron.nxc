@@ -1,0 +1,30 @@
+// EXCAVATRON
+#define perto 35 // cm
+#define anguloDesejado 20 // graus
+#define motorDireita OUT_B
+#define motorEsquerda OUT_C
+#define servoMotor OUT_A
+#define sensorSonico SensorUS(IN_1)
+
+task main() {
+     SetSensorLowspeed(IN_1);
+     Wait(4700); // Espera antes de iniciar
+
+     // Configuracao do servo motor
+
+     RotateMotor(servoMotor, 80, anguloDesejado);
+     Wait(400); // Rever tempo de espera para estabilização
+
+     // Robô em acao de acordo com as leituras dos sensores
+     while (true) {
+        if (sensorSonico < perto) {
+            OnRev(OUT_B, 100); // Frente
+            OnRev(OUT_C, 100);
+            Wait(40);
+        } else {
+            OnFwd(OUT_B, 100); // Gira para a Esquerda
+            OnRev(OUT_C, 100);
+            Wait(40);
+           }
+     }
+}
