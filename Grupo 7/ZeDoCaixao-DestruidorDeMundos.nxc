@@ -1,0 +1,42 @@
+#define motorDireita OUT_A
+#define motorEsquerda OUT_B
+#define motorArma OUT_C
+#define distancia_sensor SensorUS(IN_1)// Sensor Ultrassônico --> entrada 1
+void arma();
+void movimentoInicial();
+
+#define distancia_busca 35      // Limiar para o robô começar a andar para frente, em centímetros
+#define distancia_arma 18        // Limiar para a arma do robô ativar e levantar o adversário
+
+task main(){
+
+    SetSensorLowspeed(IN_1);
+    Wait(5000);
+    movimentoInicial();
+
+    while(true){                        //Rodar para sempre
+        if(distancia_sensor < distancia_busca){
+           OnFwd(motorDireita,-100);
+           OnFwd(motorEsquerda,-100);
+           arma();
+        }
+ 
+        else{                           // Caso não localize um objeto, girar para um lado (nesse caso, Esquerda)
+           OnFwd(motorDireita,50);
+           OnFwd(motorEsquerda,-50);
+        }
+    }
+}
+
+void arma()
+{    if(distancia_sensor <= distancia_arma){          // Se o sensor está vendo menos ou igual ao que foi definido para distancia_arma, a arma é ativada
+           RotateMotor(motorArma, 100,78);
+           Wait(2000);
+           RotateMotor(motorArma, 100,-78);
+     }
+}
+void movimentoInicial()
+{
+   RotateMotor(motorArma, 50,-158);
+}
+
