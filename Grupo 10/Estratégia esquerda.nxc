@@ -1,0 +1,33 @@
+#define motorDireita OUT_A
+#define motorEsquerda OUT_C
+#define distancia_sensor SensorUS(IN_4)
+
+
+
+#define distancia_busca 35
+
+
+
+task main(){
+     SetSensorLowspeed(IN_4);
+     Wait(5000);
+
+     OnFwd(motorDireita,-100);
+     OnFwd(motorEsquerda,-100);
+     Wait(1000);
+
+     while(true){
+        if(distancia_sensor < distancia_busca){
+           OnFwd(motorDireita,-100);
+           OnFwd(motorEsquerda,-100);
+        }
+
+        else{
+           OnFwd(motorDireita,-75);
+           OnFwd(motorEsquerda,75);
+        }
+    }
+}
+
+
+
